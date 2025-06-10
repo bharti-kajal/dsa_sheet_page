@@ -1,0 +1,41 @@
+{
+  "name": "dsa-sheet-page",
+  "version": "1.0.0",
+  "description": "DSA sheet page using technologies (Node JS, Mongo DB or Sql, Aws, Azure)",
+  "keywords": [
+    "DSA",
+    "sheet",
+    "page",
+    "using",
+    "technologies",
+    "(Node",
+    "JS",
+    "Mongo",
+    "DB",
+    "or",
+    "Sql",
+    "Aws",
+    "Azure)"
+  ],
+  "homepage": "https://github.com/bharti-kajal/dsa_sheet_page#readme",
+  "bugs": {
+    "url": "https://github.com/bharti-kajal/dsa_sheet_page/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bharti-kajal/dsa_sheet_page.git"
+  },
+  "license": "ISC",
+  "author": "Kajal Bharti",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.15.1"
+  }
+}
