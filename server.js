@@ -7,7 +7,7 @@ const server = express();
 const port = 3200;
 
 const corsOptions = {
-    origin: "http://localhost:3000",
+    origin: "https://dsa-page-sheet.netlify.app",
     methods: "GET,POST",
     preflightContinue: false,
     optionsSuccessStatus: 204,
