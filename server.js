@@ -1,4 +1,4 @@
-import './seed.js';
+// import './seed.js';
 import express from 'express';
 import cors from 'cors';
 import router from './src/config/router.js';
@@ -8,7 +8,7 @@ const server = express();
 const port = 3200;
 
 const corsOptions = {
-    origin: "https://dsa-page-sheet.netlify.app",
+    origin: "http://dsa-page-sheet.netlify.app",
     methods: "GET,POST",
     preflightContinue: false,
     optionsSuccessStatus: 204,
