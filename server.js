@@ -2,7 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import router from './src/config/router.js';
 import { connectUsingMongoose } from './src/config/dbConfig.js';
-import seedData from './seed.js'; 
+// import seedData from './seed.js'; 
 
 const server = express();
 const port = 3200;
@@ -24,6 +24,6 @@ server.use((req, res) => {
 
 server.listen(port, async () => {
   await connectUsingMongoose();  
-  await seedData();           
+  // await seedData();           
   console.log(`Server running on port ${port}`);
 });
