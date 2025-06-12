@@ -1,4 +1,3 @@
-import mongoose from "mongoose";
 import "dotenv/config";
 const url = process.env.DB_URL;
 import topicModel from "./src/models/schema/topic.schema.js";

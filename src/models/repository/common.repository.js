@@ -20,12 +20,12 @@ class CommonRepository {
   }
 
   // 3. Update status of subtopics
-  async subTopicStatus(model, topicId, subtopicId, status) {
+  async subTopicStatus(model, topicId, subtopicId, userId, status) {
     try {
       const result = await model.findOneAndUpdate(
-        { _id: topicId, "subtopics._id": subtopicId },
-        { $set: { "subtopics.$.status": status } },
-        { new: true }
+        { topicId, subtopicId, userId },
+        { $set: { status } },
+        { new: true, upsert: true }
       );
       return result;
     } catch (err) {
@@ -51,14 +51,42 @@ class CommonRepository {
     }
   }
 
-  // 6. get Topics
-  async getTopics(model) {
+  async getTopicsWithUserStatus(topicModel, userTopicModel, userId) {
     try {
-      const result = await model.find({});
-      return result;
-    } catch (err) {
-      console.log("Error in fetching lists", err);
-      throw err;
+      const topics = await topicModel.find({}).lean();
+      const userProgressList = await userTopicModel.find({ userId }).lean();
+
+      // topic status
+      const progressMap = {};
+      userProgressList.forEach((item) => {
+        progressMap[`${item.topicId}_${item.subtopicId}`] = item.status;
+      });
+
+      // insert subtopic status + calculate topic status
+      const modifiedTopics = topics.map((topic) => {
+        let allSubtopicsDone = true;
+
+        const updatedSubtopics = topic.subtopics.map((sub) => {
+          const status = progressMap[`${topic._id}_${sub._id}`] || "Pending";
+          if (status !== "Done") {
+            allSubtopicsDone = false;
+          }
+          return { ...sub, status };
+        });
+
+        const topicStatus = allSubtopicsDone ? "Done" : "Pending";
+
+        return {
+          ...topic,
+          status: topicStatus,
+          subtopics: updatedSubtopics,
+        };
+      });
+
+      return modifiedTopics;
+    } catch (error) {
+      console.error("Error in getTopicsWithUserStatus:", error);
+      throw error;
     }
   }
 }

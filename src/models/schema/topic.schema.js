@@ -16,11 +16,6 @@ const subtopicSchema = new mongoose.Schema({
   },
   level: {
     type: String
-  },
-  status: {
-    type: String,
-    enum: ['Done', 'Pending'],
-    default: 'Pending'
   }
 }, {timestamps: true});
 
@@ -32,11 +27,6 @@ const topicSchema = new mongoose.Schema({
   subtopics: {
     type: [subtopicSchema],
     default: []
-  },
-   status: {
-    type: String,
-    enum: ['Done', 'Pending'],
-    default: 'Pending'
   }
 }, {timestamps: true});
 

@@ -1,26 +1,25 @@
 import CommonRepository from "../models/repository/common.repository.js";
 import topicModel from "../models/schema/topic.schema.js";
+import userTopicModel from "../models/schema/userTopicProgress.schema.js";
 class TopicController {
   constructor() {
     this.commonRepository = new CommonRepository();
   }
 
   // View DSA Topics
-  async viewTopic(req, res) {
+    async viewTopic(req, res) {
     try {
-      const result = await this.commonRepository.getTopics(topicModel);
-      console.log("result", result);
+      const userId = req.userId; 
+      const result = await this.commonRepository.getTopicsWithUserStatus(topicModel, userTopicModel, userId);
+
       if (result) {
         res.status(200).json({ status: true, topics: result });
       } else {
-        res
-          .status(400)
-          .json({ status: false, message: "Something went wrong" });
+        res.status(400).json({ status: false, message: "No topics found" });
       }
     } catch (err) {
-      return res
-        .status(500)
-        .json({ status: false, message: "Internal server error" });
+      console.error("Controller Error:", err);
+      res.status(500).json({ status: false, message: "Internal server error" });
     }
   }
 
@@ -28,27 +27,20 @@ class TopicController {
   async subTopicStatus(req, res) {
     try {
       const { topicId, subtopicId, status } = req.body;
-
-      // Match topics and subtopics ara corerct
-      // Update subtopic status
+     
       const topic = await this.commonRepository.subTopicStatus(
-        topicModel,
+        userTopicModel,
         topicId,
         subtopicId,
+        req.userId,
         status
       );
+
       if (!topic) {
         return res
           .status(404)
           .json({ message: "Topic ID or Subtopic ID not found" });
       }
-
-      // Check if all subtopics are now 'Done'
-      const allDone = topic.subtopics.every((sub) => sub.status === "Done");
-
-      // Update topic status accordingly
-      topic.status = allDone ? "Done" : "Pending";
-      await topic.save();
 
       return res.status(200).json({ status: true, message: "Status updated" });
     } catch (err) {
@@ -60,7 +52,8 @@ class TopicController {
   // List of Prgoress
   async progress(req, res) {
     try {
-      const topics = await this.commonRepository.getTopics(topicModel);
+      const userId = req.userId;
+      const topics = await this.commonRepository.getTopicsWithUserStatus(topicModel, userTopicModel, userId);
 
       const result = topics.map((topic) => {
         const levels = { Easy: [], Medium: [], Hard: [] };
@@ -77,7 +70,7 @@ class TopicController {
           const done = levels[level].filter(Boolean).length;
           progress[level] = total
             ? ((done / total) * 100).toFixed(2) + "%"
-            : "0%";
+            : "-";
         }
 
         return {
